@@ -29,6 +29,7 @@
 
 #include "upnp-wrapper.hpp"
 #include "../stream_out/dlna/dlna_common.hpp"
+#include "../control/dlna.hpp"
 
 #include <vlc_url.h>
 #include <vlc_interrupt.h>
