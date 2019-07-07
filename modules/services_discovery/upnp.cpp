@@ -43,6 +43,9 @@
 #include <set>
 #include <string>
 
+#include "../stream_out/dlna/dlna_common.hpp"
+#include "../control/dlna.hpp"
+
 /*
  * Constants
 */
@@ -180,6 +183,13 @@ vlc_module_begin()
         add_string(SOUT_CFG_PREFIX "base_url", NULL, BASE_URL_TEXT, BASE_URL_LONGTEXT, false)
         add_string(SOUT_CFG_PREFIX "url", NULL, URL_TEXT, URL_LONGTEXT, false)
         add_renderer_opts(SOUT_CFG_PREFIX)
+
+    add_submodule()
+        set_description( N_("UPnP/DLNA MediaRenderer") )
+        set_category( CAT_INTERFACE )
+        set_subcategory( SUBCAT_INTERFACE_CONTROL )
+        set_callbacks( DLNA::OpenControl, DLNA::CloseControl )
+        set_capability( "interface", 0 )
 vlc_module_end()
 
 /*
