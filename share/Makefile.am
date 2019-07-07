@@ -70,7 +70,8 @@ endif
 
 nobase_dist_pkgdata_DATA += \
 	upnp/AVTransportSCPD.xml \
-	upnp/ConnectionManagerSCPD.xml
+	upnp/ConnectionManagerSCPD.xml \
+	upnp/RenderingControlSCPD.xml
 
 DIST_icons = \
 	vlc512x512.png
