@@ -68,7 +68,8 @@ soliddata_DATA = $(DIST_solid)
 endif
 
 nobase_dist_pkgdata_DATA += \
-	upnp/AVTransportSCPD.xml
+	upnp/AVTransportSCPD.xml \
+	upnp/ConnectionManagerSCPD.xml
 
 DIST_icons = \
 	vlc512x512.png
