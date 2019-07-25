@@ -76,7 +76,7 @@ public:
         : parent(p_stream)
         , base_url(base_url)
         , device_url(device_url)
-        , handle(upnp->handle())
+        , handle(upnp->client_handle())
         , ConnectionID("0")
         , AVTransportID("0")
         , RcsID("0")
