@@ -71,7 +71,7 @@ public:
 private:
     static UpnpInstanceWrapper* s_instance;
     static vlc::threads::mutex s_lock;
-    UpnpClient_Handle m_handle;
+    UpnpClient_Handle m_client_handle;
     int m_refcount;
     typedef std::shared_ptr<Listener> ListenerPtr;
     typedef std::vector<ListenerPtr> Listeners;
@@ -81,7 +81,7 @@ public:
     // This increases the refcount before returning the instance
     static UpnpInstanceWrapper* get( vlc_object_t* p_obj );
     void release();
-    UpnpClient_Handle handle() const;
+    UpnpClient_Handle client_handle() const;
     void addListener(ListenerPtr listener);
     void removeListener(ListenerPtr listener);
 
