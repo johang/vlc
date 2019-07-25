@@ -271,7 +271,7 @@ SearchThread( void *p_data )
     services_discovery_sys_t *p_sys = reinterpret_cast<services_discovery_sys_t *>( p_sd->p_sys );
 
     /* Search for media servers */
-    int i_res = UpnpSearchAsync( p_sys->p_upnp->handle(), 5,
+    int i_res = UpnpSearchAsync( p_sys->p_upnp->client_handle(), 5,
             MEDIA_SERVER_DEVICE_TYPE, MEDIA_SERVER_DEVICE_TYPE );
     if( i_res != UPNP_E_SUCCESS )
     {
@@ -280,7 +280,7 @@ SearchThread( void *p_data )
     }
 
     /* Search for Sat Ip servers*/
-    i_res = UpnpSearchAsync( p_sys->p_upnp->handle(), 5,
+    i_res = UpnpSearchAsync( p_sys->p_upnp->client_handle(), 5,
             SATIP_SERVER_DEVICE_TYPE, MEDIA_SERVER_DEVICE_TYPE );
     if( i_res != UPNP_E_SUCCESS )
         msg_Err( p_sd, "Error sending search request: %s", UpnpGetErrorMessage( i_res ) );
@@ -1249,7 +1249,7 @@ IXML_Document* MediaServer::_browseAction( const char* psz_object_id_,
     /* Setup an interruptible callback that will call sendActionCb if not
      * interrupted by vlc_interrupt_kill */
     i11eCb = new Upnp_i11e_cb( sendActionCb, &p_response );
-    i_res = UpnpSendActionAsync( sys->p_upnp->handle(),
+    i_res = UpnpSendActionAsync( sys->p_upnp->client_handle(),
               m_psz_root,
               CONTENT_DIRECTORY_SERVICE_TYPE,
               NULL, /* ignored in SDK, must be NULL */
@@ -1587,7 +1587,7 @@ void *SearchThread(void *data)
     renderer_discovery_sys_t *p_sys = (renderer_discovery_sys_t*)p_rd->p_sys;
     int i_res;
 
-    i_res = UpnpSearchAsync(p_sys->p_upnp->handle(), UPNP_SEARCH_TIMEOUT_SECONDS,
+    i_res = UpnpSearchAsync(p_sys->p_upnp->client_handle(), UPNP_SEARCH_TIMEOUT_SECONDS,
             MEDIA_RENDERER_DEVICE_TYPE, MEDIA_RENDERER_DEVICE_TYPE);
     if( i_res != UPNP_E_SUCCESS )
     {
