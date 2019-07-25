@@ -41,14 +41,14 @@ UpnpInstanceWrapper::Listeners UpnpInstanceWrapper::s_listeners;
 vlc_mutex_t UpnpInstanceWrapper::s_lock = VLC_STATIC_MUTEX;
 
 UpnpInstanceWrapper::UpnpInstanceWrapper()
-    : m_handle( -1 )
+    : m_client_handle( -1 )
     , m_refcount( 0 )
 {
 }
 
 UpnpInstanceWrapper::~UpnpInstanceWrapper()
 {
-    UpnpUnRegisterClient( m_handle );
+    UpnpUnRegisterClient( m_client_handle );
     UpnpFinish();
 }
 
@@ -86,7 +86,7 @@ UpnpInstanceWrapper *UpnpInstanceWrapper::get(vlc_object_t *p_obj)
         ixmlRelaxParser( 1 );
 
         /* Register a control point */
-        i_res = UpnpRegisterClient( Callback, NULL, &instance->m_handle );
+        i_res = UpnpRegisterClient( Callback, NULL, &instance->m_client_handle );
         if( i_res != UPNP_E_SUCCESS )
         {
             msg_Err( p_obj, "Client registration failed: %s", UpnpGetErrorMessage( i_res ) );
@@ -122,9 +122,9 @@ void UpnpInstanceWrapper::release()
     delete p_delete;
 }
 
-UpnpClient_Handle UpnpInstanceWrapper::handle() const
+UpnpClient_Handle UpnpInstanceWrapper::client_handle() const
 {
-    return m_handle;
+    return m_client_handle;
 }
 
 int UpnpInstanceWrapper::Callback(Upnp_EventType event_type, UpnpEventPtr p_event, void *p_user_data)
