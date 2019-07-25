@@ -71,7 +71,10 @@ private:
     static UpnpInstanceWrapper* s_instance;
     static vlc_mutex_t s_lock;
     UpnpClient_Handle m_client_handle;
+    UpnpDevice_Handle m_device_handle;
+    std::string m_udn;
     int m_refcount;
+    int m_mediarenderer_refcount;
     typedef std::shared_ptr<Listener> ListenerPtr;
     typedef std::vector<ListenerPtr> Listeners;
     static Listeners s_listeners;
@@ -81,8 +84,12 @@ public:
     static UpnpInstanceWrapper* get( vlc_object_t* p_obj );
     void release();
     UpnpClient_Handle client_handle() const;
+    UpnpDevice_Handle device_handle() const;
+    std::string udn() const;
     void addListener(ListenerPtr listener);
     void removeListener(ListenerPtr listener);
+    bool startMediaRenderer( vlc_object_t *p_obj );
+    bool stopMediaRenderer( vlc_object_t *p_obj );
 
 private:
     static int Callback( Upnp_EventType event_type, UpnpEventPtr p_event, void* p_user_data );
