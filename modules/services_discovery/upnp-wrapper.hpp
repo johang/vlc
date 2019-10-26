@@ -70,7 +70,8 @@ public:
 
 private:
     static UpnpInstanceWrapper* s_instance;
-    static vlc::threads::mutex s_lock;
+    static vlc::threads::mutex s_lock_listeners;
+    static vlc::threads::mutex s_lock_instance;
     UpnpClient_Handle m_client_handle;
     UpnpDevice_Handle m_device_handle;
     std::string m_udn;
