@@ -80,7 +80,8 @@ static const char *mediarenderer_desc_template   =
 
 UpnpInstanceWrapper* UpnpInstanceWrapper::s_instance;
 UpnpInstanceWrapper::Listeners UpnpInstanceWrapper::s_listeners;
-vlc_mutex_t UpnpInstanceWrapper::s_lock = VLC_STATIC_MUTEX;
+vlc_mutex_t UpnpInstanceWrapper::s_lock_instance = VLC_STATIC_MUTEX;
+vlc_mutex_t UpnpInstanceWrapper::s_lock_listeners = VLC_STATIC_MUTEX;
 
 std::string generateUDN()
 {
@@ -134,7 +135,7 @@ UpnpInstanceWrapper::~UpnpInstanceWrapper()
 
 UpnpInstanceWrapper *UpnpInstanceWrapper::get(vlc_object_t *p_obj)
 {
-    vlc_mutex_locker lock( &s_lock );
+    vlc_mutex_locker lock( &s_lock_instance );
     if ( s_instance == NULL )
     {
         UpnpInstanceWrapper* instance = new(std::nothrow) UpnpInstanceWrapper;
@@ -209,7 +210,7 @@ UpnpInstanceWrapper *UpnpInstanceWrapper::get(vlc_object_t *p_obj)
 void UpnpInstanceWrapper::release()
 {
     UpnpInstanceWrapper *p_delete = NULL;
-    vlc::threads::mutex_locker lock( &s_lock );
+    vlc::threads::mutex_locker lock( &s_lock_instance );
     if (--s_instance->m_refcount == 0)
     {
         p_delete = s_instance;
@@ -235,7 +236,7 @@ std::string UpnpInstanceWrapper::udn() const
 
 int UpnpInstanceWrapper::Callback(Upnp_EventType event_type, UpnpEventPtr p_event, void *p_user_data)
 {
-    vlc::threads::mutex_locker lock( &s_lock );
+    vlc::threads::mutex_locker lock( &s_lock_listeners );
     for (Listeners::iterator iter = s_listeners.begin(); iter != s_listeners.end(); ++iter)
     {
         (*iter)->onEvent(event_type, p_event, p_user_data);
@@ -246,14 +247,14 @@ int UpnpInstanceWrapper::Callback(Upnp_EventType event_type, UpnpEventPtr p_even
 
 void UpnpInstanceWrapper::addListener(ListenerPtr listener)
 {
-    vlc::threads::mutex_locker lock( &s_lock );
+    vlc::threads::mutex_locker lock( &s_lock_listeners );
     if ( std::find( s_listeners.begin(), s_listeners.end(), listener) == s_listeners.end() )
         s_listeners.push_back( std::move(listener) );
 }
 
 void UpnpInstanceWrapper::removeListener(ListenerPtr listener)
 {
-    vlc::threads::mutex_locker lock( &s_lock );
+    vlc::threads::mutex_locker lock( &s_lock_listeners );
     Listeners::iterator iter = std::find( s_listeners.begin(), s_listeners.end(), listener );
     if ( iter != s_listeners.end() )
         s_listeners.erase( iter );
@@ -261,7 +262,7 @@ void UpnpInstanceWrapper::removeListener(ListenerPtr listener)
 
 bool UpnpInstanceWrapper::startMediaRenderer( vlc_object_t *p_obj )
 {
-    vlc::threads::mutex_locker lock( &s_lock );
+    vlc::threads::mutex_locker lock( &s_lock_instance );
     if( m_mediarenderer_refcount == 0 )
     {
         std::string friendly_name( "VLC media player" );
@@ -311,7 +312,7 @@ bool UpnpInstanceWrapper::startMediaRenderer( vlc_object_t *p_obj )
 
 bool UpnpInstanceWrapper::stopMediaRenderer( vlc_object_t *p_obj )
 {
-    vlc::threads::mutex_locker lock( &s_lock_lock );
+    vlc::threads::mutex_locker lock( &s_lock_instance );
     if( m_mediarenderer_refcount == 1 )
     {
         int i_res;
